@@ -1,0 +1,46 @@
+#! pip install textblob
+#! pip install vaderSentiment
+
+from tkinter import *
+from textblob import TextBlob
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+sid_obj = SentimentIntensityAnalyzer()
+
+# 1.) create an application window
+window = Tk()
+window.geometry('600x400')
+window.config(bg='#25CBB9')
+window.title('Sentiment Analyzer')
+window.resizable(width=False,height=False)
+displayResult = StringVar()
+
+
+# 4.) event handling
+def check_sentiment():
+    user_input = inputText_field.get()
+    res = TextBlob(user_input)
+    res = sid_obj.polarity_scores(res)
+    if res['compound'] >= 0.05:
+      displayResult.set('Positive')
+      inputText_field.delete(0,END)
+    elif res['compound'] <= -0.05:
+      displayResult.set('Negative')
+      inputText_field.delete(0,END)
+    else:
+      displayResult.set('Neutral')
+      inputText_field.delete(0,END)
+
+
+# 2.) create widgets
+title = Label(window,text='Sentiment Analyzer Please Insert Some Text Below', bg='#25CBB9',font=('Arial',16))
+inputText_field = Entry(window,font=('Arial',12))
+button1 = Button(window,text='Classify Text',fg='#FAFAFA', bg='#24C6D3',font=('Arial',16),command=check_sentiment)
+outputLabel = Label(window,fg='#D32E24', bg='#25CBB9',font=('Arial',16),textvariable=displayResult)
+
+
+# 3.) place widgets
+title.place(x=75,y=50)
+inputText_field.place(x=110,y=120)
+button1.place(x=320,y=120)
+outputLabel.place(x=250,y=200)
+window.mainloop()
